@@ -6,12 +6,10 @@ import org.example.enums.DataType;
 import org.example.strategies.IntReader;
 import org.example.strategies.StringReader;
 import org.example.strategies.ReaderStrategy;
-//import com.example.sorting.utils.FileReader;
-//import com.example.sorting.utils.FileWriter;
 
 //import java.io.File;
 import java.io.IOException;
-import java.io.FileNotFoundException; // заменить на общий класс ошибок ?
+import java.io.FileNotFoundException; //
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.nio.file.Files;
