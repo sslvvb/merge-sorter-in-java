@@ -1,73 +1,63 @@
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+package org.example.strategies;
 
 import org.example.enums.SortMode;
 import org.example.strategies.IntReader;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.Scanner;
+import java.io.File;
+import java.io.IOException;
 
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IntReaderTest {
 
-//    private IntReader intReader;
+    private IntReader ascReader;
+    private IntReader descReader;
 
-//    @BeforeEach
-//    public void setUp() throws FileNotFoundException, Exception {
-//        // Create a mock SortMode and set up Scanner with mock input data
-//        SortMode mockSortMode = SortMode.ASCENDING;
-//
-//        // Create IntReader instance with mock SortMode and Scanner
-//        intReader = new IntReader("resources/basic/empty.txt", mockSortMode);
-//    }
-
-    @Test
-    public void testInitEmptyFile() {
+    @BeforeEach
+    public void setUp() {
+        File intFile = new File(this.getClass().getResource("/int/test.txt").getFile());
+        String testFilePath = intFile.getAbsolutePath();
         try {
-            IntReader intReader = new IntReader("test/resources/basic/empty.txt", SortMode.ASCENDING);
-            fail("Empty file was not thrown.");
-        } catch (Exception e) {
-            // assertEquals("test/resources/basic/empty.txt empty.txt is empty.", e.getMessage());
-            assertEquals("test/resources/basic/empty.txt (No such file or directory)", e.getMessage());
+            ascReader = new IntReader(testFilePath, SortMode.ASCENDING);
+            descReader = new IntReader(testFilePath, SortMode.DESCENDING);
+        } catch (IOException e) {
+            fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
 
     @Test
-    public void testInitCorrectFile() {
-        try {
-            IntReader intReader = new IntReader("test/resources/ints/in1.txt", SortMode.ASCENDING);
-        } catch (Exception e) {
-            System.out.println("error sslvvb");
-//            fail("Empty file was not thrown.");
-            // assertEquals("test/resources/basic/empty.txt empty.txt is empty.", e.getMessage());
-//            assertEquals("test/resources/basic/empty.txt (No such file or directory)", e.getMessage());
-        }
+    @DisplayName("Test ascending sorting")
+    public void testValueCompareAscending() {
+        assertTrue(ascReader.valueCompare("10", "5"));
+        assertFalse(ascReader.valueCompare("5", "10"));
+        assertFalse(ascReader.valueCompare("10", "10"));
     }
 
-//    @Test
-//    public void testCompareValues() {
-//        // Mock another ReaderStrategy instance for comparison
-//        ReaderStrategy mockReader = mock(ReaderStrategy.class);
-//        when(mockReader.getValue()).thenReturn("100");
-//
-//        // Test case: Compare values (intReader.value = 123, mockReader.value = 100)
-//        boolean result = intReader.compareValues(mockReader);
-//        assert result : "Comparison failed.";
-//    }
-//
-//    @Test
-//    public void testShiftValue() {
-//        // Test case: Shift to next value (123 -> 456)
-//        int shiftResult = intReader.shiftValue();
-//        assert shiftResult == 0 : "Shift to next value failed.";
-//
-//        // Test case: Shift to end of file
-//        shiftResult = intReader.shiftValue();
-//        assert shiftResult == 1 : "Shift to end of file failed.";
-//    }
+    @Test
+    @DisplayName("Test descending sorting")
+    public void testValueCompareDescending() {
+        assertTrue(descReader.valueCompare("5", "10"));
+        assertFalse(descReader.valueCompare("10", "5"));
+        assertFalse(descReader.valueCompare("10", "10"));
+    }
+
+    @Test
+    @DisplayName("Test valid inputs")
+    public void testIsValidWithValidInput() {
+        assertTrue(ascReader.isValid("123"));
+        assertTrue(ascReader.isValid("-456"));
+    }
+
+    @Test
+    @DisplayName("Test invalid inputs")
+    public void testIsValidWithInvalidInput() {
+        assertFalse(ascReader.isValid("abc"));
+        assertFalse(ascReader.isValid("12a"));
+        assertFalse(ascReader.isValid("1 2 3"));
+        assertFalse(ascReader.isValid("1.2"));
+    }
 }

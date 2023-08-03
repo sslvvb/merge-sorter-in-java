@@ -1,42 +1,47 @@
-# merge-sorter-in-java
 ## Программа сортировки слиянием нескольких файлов.
 
-### Requierements:
+### Dependencies:
 
-#### Java vesion:
+- Java version: Java 8
+- Build system: Maven
+- JUnit, Mockito for unit testing
+- Jacoco for coverage
 
-Java version: Java 8
-Build system: Maven
+### About:
 
-java version "1.8.0_381"
-Java(TM) SE Runtime Environment (build 1.8.0_381-b09)
-Java HotSpot(TM) 64-Bit Server VM (build 25.381-b09, mixed mode)
+Программа сортировки слиянием нескольких файлов. Входные файлы содержат данные одного из двух видов: целые числа или строки. Данные записаны в столбик (каждая строка файла – новый элемент). Строки могут содержать любые не пробельные символы, строки с пробелами считаются ошибочными. Также считается, что файлы предварительно отсортированы. Результатом работы программы должен являться новый файл с объединенным содержимым входных файлов, отсортированным по возрастанию или убыванию путем сортировки слиянием.
 
-openjdk 20.0.2 2023-07-18
-OpenJDK Runtime Environment (build 20.0.2+9-78)
-OpenJDK 64-Bit Server VM (build 20.0.2+9-78, mixed mode, sharing)
+##### Особенности реализации:
+- Параметры с флагами ожидаются до имени выходного и входных файлов.
+- Порядок ввода флагов неважен.
+- Нельзя вводить несколько флагов одного параметра/режима (сначала инт, затем строка).
+- Имена входных файлов указываются только после выходного.
 
-#### Maven version:
+Строки с пробелами или не являющиеся числами будут пропущены.
+Если нарушен порядок сортировки, ошибочное значение будет пропущено.
+Нижеследующие значения, удавлетворяющие условию, будут обработаны.
 
-Apache Maven 3.9.3 (21122926829f1ead511c958d89bd2f672198ae9f)
-Maven home: /opt/homebrew/Cellar/maven/3.9.3/libexec
-Java version: 20.0.1, vendor: Homebrew, runtime: /opt/homebrew/Cellar/openjdk/20.0.1/libexec/openjdk.jdk/Contents/Home
-Default locale: ru_US, platform encoding: UTF-8
-OS name: "mac os x", version: "13.4.1", arch: "aarch64", family: "mac"
+Параметры командной строки для корректной работы:
 
-
-Dependencies:
-junit for unit testing
-
+* режим сортировки (-a или -d), необязательный, по умолчанию сортируем по возрастанию;
+* тип данных (-s или -i), обязательный;
+* имя выходного файла, обязательное; (все пути относительно директории запуска)
+* остальные параметры – имена входных файлов, не менее одного.
 
 ### Usage:
 
-`mvn compile`
+1) В корне директории для сборки проекта:
 
 `mvn package`
 
-`java -jar target/shiftTestProject-1.0-SNAPSHOT.jar asd er wer`
+2) Для запуска из корня директории:
 
-`mvn test` - запустить тесты
+`java -jar target/shiftTestProject-1.0-SNAPSHOT.jar -a -i out.txt in1.txt in2.txt in3.txt`
 
-`mvn clean test jacoco:report` - для покрытия
+3) Для запуска тестов:
+
+`mvn test`
+
+4) Покрытие:
+
+`mvn clean test jacoco:report`

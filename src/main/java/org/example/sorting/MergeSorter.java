@@ -28,10 +28,6 @@ public class MergeSorter {
     }
 
     public void startSort() throws IOException {
-        if (Files.exists(Paths.get(outputFile))) {
-            throw new IOException("Output file already exists. Specify the name of a file that does not exist.");
-        }
-
         ArrayList<ReaderStrategy> readersList = createReaderList();
 
         FileWriter writeFile = new FileWriter(outputFile);

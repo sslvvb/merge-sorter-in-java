@@ -1,96 +1,99 @@
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.Mockito;
-////
-//import org.example.enums.DataType;
-//import org.example.enums.SortMode;
-//import org.example.sorting.MergeSorter;
-//import org.example.strategies.IntReader;
-//import org.example.strategies.ReaderStrategy;
-//import org.example.utils.Parser;
-////
-//import java.io.FileWriter;
-//import java.io.IOException;
-//import java.util.ArrayList;
-//import java.util.Arrays;
-////
-//import static org.mockito.Mockito.*;
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//public class MergeSorterTest {
-//
-//    private MergeSorter mergeSorter;
-//
-//    @BeforeEach
-//    public void setUp() {
-//        // Create a mock parser and set it up with necessary values
-//        Parser mockParser = mock(Parser.class);
-//        when(mockParser.getSortMode()).thenReturn(SortMode.ASCENDING);
-//        when(mockParser.getDataType()).thenReturn(DataType.INTEGER);
-//        when(mockParser.getOutputFile()).thenReturn("output.txt");
-//        when(mockParser.getInputFiles()).thenReturn(new ArrayList<>(Arrays.asList("input1.txt", "input2.txt")));
-//
-//
-//        // Create MergeSorter instance with the mock parser
-//        mergeSorter = new MergeSorter(mockParser);
-//    }
-//
-//    @Test
-//    public void testStartSort() throws IOException {
-//        // Mock ReaderStrategy instances
-//        IntReader intReader1 = mock(IntReader.class);
-//        IntReader intReader2 = mock(IntReader.class);
-//
-//        // Mock FileWriter
-//        FileWriter mockFileWriter = mock(FileWriter.class);
-//        whenNew(FileWriter.class).withArguments("output.txt").thenReturn(mockFileWriter);
-//
-////        // Set up mock behavior for ReaderStrategy instances
-////        when(intReader1.compareValues(Mockito.any())).thenReturn(true, false);
-////        when(intReader1.getValue()).thenReturn("123");
-////        when(intReader1.shiftValue()).thenReturn(0, 1); // Indicates end of file
-////        when(intReader2.compareValues(Mockito.any())).thenReturn(false);
-////        when(intReader2.getValue()).thenReturn("456");
-////        when(intReader2.shiftValue()).thenReturn(1); // Indicates end of file
-////
-////        ArrayList<ReaderStrategy> readerList = new ArrayList<>(Arrays.asList(intReader1, intReader2));
-////        when(mergeSorter.createReaderList()).thenReturn(readerList);
-////
-////        // Call the method under test
-////        mergeSorter.startSort();
-////
-////        // Verify interactions
-////        verify(mockFileWriter).write("123\n");
-////        verify(mockFileWriter).write("456\n");
-////        verify(mockFileWriter).close();
-//    }
-//
-////    @Test
-////    public void testStartSort() throws IOException {
-////        // Mock FileWriter and other dependencies
-////        FileWriter mockFileWriter = mock(FileWriter.class);
-////        whenNew(FileWriter.class).withArguments("output.txt").thenReturn(mockFileWriter);
-////
-////        // Mock ReaderStrategy instances and set up their behavior
-////
-////        ArrayList<ReaderStrategy> readerList = new ArrayList<>(Arrays.asList(intReader1, intReader2));
-////
-////        // Since createReaderList() is private, we cannot directly mock it
-////        // Instead, we can mock its behavior indirectly by using the method that calls it
-////        MergeSorter spyMergeSorter = spy(mergeSorter);
-////        doReturn(readerList).when(spyMergeSorter).createReaderList();
-////
-////        // Call the method under test
-////        spyMergeSorter.startSort();
-////
-////        // Verify interactions
-////        verify(mockFileWriter).write("123\n");
-////        verify(mockFileWriter).write("456\n");
-////        verify(mockFileWriter).close();
-////    }
-//}
-//
-//
-//
-//
-//
+package org.example.sorting;
+
+import org.example.utils.Parser;
+import org.example.enums.SortMode;
+import org.example.enums.DataType;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+public class MergeSorterTest {
+
+    String outFilePath;
+
+    @BeforeEach
+    public void setUp() {
+        outFilePath = getResourceFilePath("/output.txt");
+        outFilePath = getResourceFilePath("/output.txt");
+    }
+
+    @Test
+    @DisplayName("Test sorting with integer data")
+    public void testStartSortWithIntegerData() throws IOException {
+        String in1Path = getResourceFilePath("/int/input1.txt");
+        String in2Path = getResourceFilePath("/int/input2.txt");
+
+        Parser mockParser = prepareMockParser(SortMode.ASCENDING, DataType.INTEGER, outFilePath, in1Path, in2Path);
+
+        MergeSorter mergeSorter = new MergeSorter(mockParser);
+        mergeSorter.startSort();
+
+        assertOutputMatchesResult(outFilePath, getResourceFilePath("/result/result1.txt"));
+    }
+
+    @Test
+    @DisplayName("Test sorting with string data")
+    public void testStartSortWithStringData() throws IOException {
+        String in1Path = getResourceFilePath("/string/input1.txt");
+        String in2Path = getResourceFilePath("/string/input2.txt");
+
+        Parser mockParser = prepareMockParser(SortMode.ASCENDING, DataType.STRING, outFilePath, in1Path, in2Path);
+
+        MergeSorter mergeSorter = new MergeSorter(mockParser);
+        mergeSorter.startSort();
+
+        assertOutputMatchesResult(outFilePath, getResourceFilePath("/result/result2.txt"));
+    }
+
+    @Test
+    @DisplayName("Test sorting with empty input files")
+    public void testStartSortWithEmptyInputFiles() throws IOException {
+        String emptyFilePath = getResourceFilePath("/int/empty.txt");
+
+        Parser mockParser = prepareMockParser(SortMode.ASCENDING, DataType.INTEGER, outFilePath, emptyFilePath);
+
+        MergeSorter mergeSorter = new MergeSorter(mockParser);
+        mergeSorter.startSort();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(outFilePath))) {
+            assertNull(reader.readLine(), "Output should be empty.");
+        }
+    }
+
+    private Parser prepareMockParser(SortMode sortMode, DataType dataType, String outputFile, String... inputFiles) {
+        Parser mockParser = mock(Parser.class);
+        when(mockParser.getSortMode()).thenReturn(sortMode);
+        when(mockParser.getDataType()).thenReturn(dataType);
+        when(mockParser.getOutputFile()).thenReturn(outputFile);
+        ArrayList<String> mockedList = new ArrayList<>(List.of(inputFiles));
+        when(mockParser.getInputFiles()).thenReturn(mockedList);
+        return mockParser;
+    }
+
+    private void assertOutputMatchesResult(String outputFilePath, String expectedResultPath) throws IOException {
+        try (BufferedReader readerOutput = new BufferedReader(new FileReader(outputFilePath));
+             BufferedReader readerResult = new BufferedReader(new FileReader(expectedResultPath))) {
+            String outputLine;
+            String resultLine;
+            while ((resultLine = readerResult.readLine()) != null) {
+                outputLine = readerOutput.readLine();
+                assertEquals(resultLine, outputLine, "Output does not match expected result.");
+            }
+        }
+    }
+
+    private String getResourceFilePath(String resourcePath) {
+        return new File(this.getClass().getResource(resourcePath).getFile()).getAbsolutePath();
+    }
+}
