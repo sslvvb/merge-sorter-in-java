@@ -6,7 +6,7 @@ import org.example.utils.Parser;
 import java.io.IOException;
 
 public class MergeSortApp {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         try {
             MergeSorter sorter = new MergeSorter(new Parser(args));
             sorter.startSort();
@@ -16,10 +16,5 @@ public class MergeSortApp {
         } catch (IOException ex) {
             System.out.println("IOException: " + ex.getMessage());
         }
-//        } catch (FileNotFoundException e) {
-//            System.err.println("Error: The specified output file does not exist or cannot be created.");
-//        } catch (Exception e) {
-//            System.err.println("An unexpected error occurred: " + e.getMessage());
-//        }
     }
 }

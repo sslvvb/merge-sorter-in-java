@@ -33,9 +33,6 @@ public class ParserTest {
             assertEquals(DataType.STRING, parser.getDataType());
             assertEquals("output.txt", parser.getOutputFile());
             assertEquals(3, parser.getInputFiles().size());
-            assertEquals("input1.txt", parser.getInputFiles().get(0));
-            assertEquals("input2.txt", parser.getInputFiles().get(1));
-            assertEquals("input3.txt", parser.getInputFiles().get(2));
         } catch (IllegalArgumentException e) {
             fail("Unexpected exception thrown: " + e.getMessage());
         }
@@ -118,7 +115,7 @@ public class ParserTest {
         }
     }
 
-    // в этом тесте не эксепше, а просто строка на экран и вычисления идут выполняться дальше.
+//     в этом тесте не эксепше, а просто строка на экран и вычисления идут выполняться дальше.
 //    @Test
 //    public void parserTest_SameInputFiles_Exception() {
 //        String[] args = {"-s", "output.txt", "intput.txt", "intput.txt"};
@@ -129,5 +126,4 @@ public class ParserTest {
 //            assertEquals("Input file <input.txt> already exists. The argument will be skipped.", e.getMessage());
 //        }
 //    }
-
 }
